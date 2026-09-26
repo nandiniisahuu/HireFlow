@@ -197,6 +197,16 @@ Support for external job board publishing and integration.
 - VS Code
 - pnpm
 
+### Multi-Tenant Architecture
+
+HireFlow follows an organization-based multi-tenant architecture.
+
+- Each organization has its own users, jobs, candidates, applications, interviews, offers, and onboarding data.
+- Recruiters can access recruitment data belonging to their organization.
+- Private recruitment data is isolated between different organizations.
+- Published and public jobs can be displayed on the organization's public Career Page.
+- Candidates can view public job postings and apply without accessing the recruiter dashboard.
+
 ## 🏗️ Project Structure
 
 ```text

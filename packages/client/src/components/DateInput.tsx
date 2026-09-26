@@ -47,6 +47,7 @@ export const DateInput = forwardRef<HTMLInputElement, DateInputProps>(function D
         {...props}
         ref={ref}
         type="date"
+        className={`field-control ${props.className ?? ""}`}
         onInput={(e) => {
           validate(e.currentTarget);
           onInput?.(e);

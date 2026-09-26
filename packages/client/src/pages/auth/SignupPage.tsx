@@ -7,6 +7,17 @@ import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
+const featureKeys = [
+  "auth.featureJobPostings",
+  "auth.featureApplicantTracking",
+  "auth.featureInterviewScheduling",
+  "auth.featureResumeParsing",
+  "auth.featureOfferManagement",
+  "auth.featureOnboarding",
+  "auth.featureAiScoring",
+  "auth.featureAnalytics",
+];
+
 export function SignupPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -42,68 +53,71 @@ export function SignupPage() {
         toast.error(res.error?.message || "Registration failed");
       }
     } catch (err: any) {
-      toast.error(
-        err.response?.data?.error?.message || "Registration failed"
-      );
+      toast.error(err.response?.data?.error?.message || "Registration failed");
     }
   }
 
+  const inputClass =
+    "mt-1 block w-full rounded-lg border border-[#302b52] bg-[#0d0b25] px-3 py-2.5 text-sm text-white placeholder:text-slate-500 shadow-none outline-none transition focus:border-[#8b5cf6] focus:ring-2 focus:ring-[#7c3aed]/20";
+
+  const labelClass = "block text-xs font-medium text-slate-200";
+
   return (
-    <div className="flex min-h-screen">
-      {/* Language switcher */}
-      <div className="absolute end-4 top-4 z-10">
+    <div className="flex min-h-screen bg-[#edeeF0]">
+      <div className="absolute end-4 top-4 z-20">
         <LanguageSwitcher />
       </div>
 
-      {/* Left panel */}
-      <div className="hidden lg:flex lg:w-1/2 items-center justify-center bg-gradient-to-br from-brand-600 to-brand-800 p-12">
-        <div className="max-w-md text-white">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20">
-              <Briefcase className="h-7 w-7 text-white" />
+      {/* Brand panel */}
+      <div className="hidden lg:flex lg:w-1/2 items-center justify-center bg-[#0c0a20] px-12 py-16">
+        <div className="w-full max-w-md text-white">
+          <div className="mb-8 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#3e3955] shadow-none">
+              <Briefcase className="h-5 w-5 text-white" />
             </div>
-            <span className="text-2xl font-bold">HireFlow</span>
+            <span className="text-xl font-bold tracking-tight">HireFlow</span>
           </div>
 
-          <h2 className="text-3xl font-bold leading-tight mb-4">
-            Start managing your recruitment
-          </h2>
-
-          <p className="text-brand-100 text-lg leading-relaxed">
-            Create your organization account and manage jobs, candidates,
-            interviews, offers, and recruitment workflows in one place.
+          <h1 className="text-3xl font-bold leading-tight tracking-tight">
+            Build your hiring workspace
+          </h1>
+          <p className="mt-4 max-w-lg text-sm leading-6 text-slate-300">
+            Create your organization account and manage jobs, applicants,
+            interviews, offers, and recruitment workflows — all in one place.
           </p>
+
+          <div className="mt-10 grid grid-cols-2 gap-x-8 gap-y-4">
+            {featureKeys.map((feature) => (
+              <div key={feature} className="flex items-center gap-2 text-sm">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#a78bfa]" />
+                <span className="text-slate-300">{t(feature)}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Right panel */}
-      <div className="flex w-full lg:w-1/2 items-center justify-center bg-gray-50 px-4 py-8">
+      {/* Signup panel */}
+      <div className="flex w-full lg:w-1/2 items-center justify-center px-4 py-16 sm:px-8">
         <div className="w-full max-w-md">
-          {/* Mobile logo */}
           <div className="mb-6 flex items-center justify-center gap-3 lg:hidden">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600">
-              <Briefcase className="h-6 w-6 text-white" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#3e3955]">
+              <Briefcase className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">
-              HireFlow
-            </span>
+            <span className="text-xl font-bold text-[#17142f]">HireFlow</span>
           </div>
 
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-2xl font-bold text-gray-900">
+          <div className="rounded-xl border border-[#2b2844] bg-[#171431] p-6 shadow-[0_18px_45px_rgba(20,16,50,0.18)] sm:p-7">
+            <h2 className="text-xl font-bold text-white">
               Create your account
             </h2>
-
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-xs text-slate-400">
               Set up your organization to get started.
             </p>
 
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            <form onSubmit={handleSubmit} className="mt-5 space-y-3.5">
               <div>
-                <label
-                  htmlFor="orgName"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="orgName" className={labelClass}>
                   Organization Name
                 </label>
                 <input
@@ -112,16 +126,13 @@ export function SignupPage() {
                   value={orgName}
                   onChange={(e) => setOrgName(e.target.value)}
                   required
-                  className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  className={inputClass}
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
-                  <label
-                    htmlFor="firstName"
-                    className="block text-sm font-medium text-gray-700"
-                  >
+                  <label htmlFor="firstName" className={labelClass}>
                     First Name
                   </label>
                   <input
@@ -130,15 +141,12 @@ export function SignupPage() {
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     required
-                    className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                    className={inputClass}
                   />
                 </div>
 
                 <div>
-                  <label
-                    htmlFor="lastName"
-                    className="block text-sm font-medium text-gray-700"
-                  >
+                  <label htmlFor="lastName" className={labelClass}>
                     Last Name
                   </label>
                   <input
@@ -147,17 +155,14 @@ export function SignupPage() {
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     required
-                    className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                    className={inputClass}
                   />
                 </div>
               </div>
 
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Email
+                <label htmlFor="email" className={labelClass}>
+                  Email address
                 </label>
                 <input
                   id="email"
@@ -165,18 +170,14 @@ export function SignupPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  className={inputClass}
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="password" className={labelClass}>
                   Password
                 </label>
-
                 <div className="relative mt-1">
                   <input
                     id="password"
@@ -185,13 +186,15 @@ export function SignupPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={8}
-                    className="block w-full rounded-lg border border-gray-300 px-3 py-2 pr-10 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                    className={`${inputClass} pr-10`}
                   />
-
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 transition hover:text-slate-200"
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -200,17 +203,13 @@ export function SignupPage() {
                     )}
                   </button>
                 </div>
-
-                <p className="mt-1 text-xs text-gray-400">
+                <p className="mt-1 text-[11px] text-slate-500">
                   Minimum 8 characters
                 </p>
               </div>
 
               <div>
-                <label
-                  htmlFor="country"
-                  className="block text-sm font-medium text-gray-700"
-                >
+                <label htmlFor="country" className={labelClass}>
                   Country
                 </label>
                 <input
@@ -219,14 +218,14 @@ export function SignupPage() {
                   value={country}
                   onChange={(e) => setCountry(e.target.value)}
                   placeholder="India"
-                  className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                  className={inputClass}
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={registerMutation.isPending}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
+                className="mt-1 flex w-full items-center justify-center gap-2 rounded-lg bg-[#7c00f5] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-purple-950/25 transition hover:bg-[#8b16ff] focus:outline-none focus:ring-2 focus:ring-purple-400/40 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {registerMutation.isPending ? (
                   <>
@@ -239,18 +238,18 @@ export function SignupPage() {
               </button>
             </form>
 
-            <p className="mt-5 text-center text-sm text-gray-500">
+            <p className="mt-5 text-center text-xs text-slate-400">
               Already have an account?{" "}
               <Link
                 to="/login"
-                className="font-medium text-brand-600 hover:text-brand-700"
+                className="font-semibold text-[#a78bfa] transition hover:text-white"
               >
                 Sign in
               </Link>
             </p>
           </div>
 
-          <p className="mt-6 text-center text-xs text-gray-400">
+          <p className="mt-5 text-center text-[11px] text-slate-500">
             {t("auth.ecosystemNote")}
           </p>
         </div>

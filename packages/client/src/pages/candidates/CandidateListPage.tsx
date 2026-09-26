@@ -1,6 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
-import { Plus, Search, Users, ChevronRight, Mail, Building2, Clock } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Users,
+  ChevronRight,
+  Mail,
+  Building2,
+  Clock,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { usePaginatedList } from "@/lib/usePaginatedList";
 import { Pagination, DEFAULT_PAGE_SIZE } from "@/components/Pagination";
@@ -19,7 +27,10 @@ const CANDIDATE_COLUMNS: ExportColumn<Candidate>[] = [
   { header: "Current Title", value: (c) => c.current_title },
   { header: "Experience (yrs)", value: (c) => c.experience_years },
   { header: "Source", value: (c) => c.source },
-  { header: "Added", value: (c) => (c.created_at ? formatDate(c.created_at) : "") },
+  {
+    header: "Added",
+    value: (c) => (c.created_at ? formatDate(c.created_at) : ""),
+  },
 ];
 
 const SOURCE_BADGE: Record<string, string> = {
@@ -50,13 +61,18 @@ export function CandidateListPage() {
   // Debounce the search box into the URL; changing the term resets to page 1.
   useEffect(() => {
     const t = setTimeout(() => {
-      if (searchInput.trim() !== searchTerm) setFilter("search", searchInput.trim());
+      if (searchInput.trim() !== searchTerm)
+        setFilter("search", searchInput.trim());
     }, 400);
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchInput]);
 
-  const { rows: candidates, total, isLoading } = usePaginatedList<Candidate>(
+  const {
+    rows: candidates,
+    total,
+    isLoading,
+  } = usePaginatedList<Candidate>(
     ["candidates"],
     "/candidates",
     { search: searchTerm },
@@ -64,47 +80,61 @@ export function CandidateListPage() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto w-full max-w-[1500px] space-y-5 pb-8 sm:space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t("candidates.list.title")}</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            {t("candidates.list.subtitle", { count: total })}
-          </p>
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#111a35] via-[#18244a] to-brand-900 px-5 py-7 text-white shadow-xl sm:px-7 sm:py-8">
+        <div
+          className="pointer-events-none absolute -right-10 -top-16 h-56 w-56 rounded-full bg-brand-400/20 blur-3xl"
+          aria-hidden="true"
+        />
+        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              {t("candidates.list.title")}
+            </h1>
+            <p className="mt-2 text-sm text-slate-300">
+              {t("candidates.list.subtitle", { count: total })}
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <ExportButtons
+              baseName="candidates"
+              title={t("candidates.list.title")}
+              subtitle={t("candidates.list.subtitle", { count: total })}
+              columns={CANDIDATE_COLUMNS}
+              fetchRows={() =>
+                fetchAllRows<Candidate>("/candidates", { search: searchTerm })
+              }
+            />
+            <Link
+              to="/candidates/new"
+              className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-brand-800 shadow-sm transition hover:bg-brand-50"
+            >
+              <Plus className="h-4 w-4" />
+              {t("candidates.list.addCandidate")}
+            </Link>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <ExportButtons
-            baseName="candidates"
-            title={t("candidates.list.title")}
-            subtitle={t("candidates.list.subtitle", { count: total })}
-            columns={CANDIDATE_COLUMNS}
-            fetchRows={() => fetchAllRows<Candidate>("/candidates", { search: searchTerm })}
-          />
-          <Link
-            to="/candidates/new"
-            className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-700 transition-colors"
-          >
-            <Plus className="h-4 w-4" />
-            {t("candidates.list.addCandidate")}
-          </Link>
-        </div>
-      </div>
+      </section>
 
       {/* Search */}
-      <div className="relative">
-        <label className="sr-only" htmlFor="candidate-search">{t("candidates.list.searchPlaceholder")}</label>
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-        <input
-          id="candidate-search"
-          type="text"
-          aria-label={t("candidates.list.searchPlaceholder")}
-          value={searchInput}
-          onChange={(e) => setSearchInput(e.target.value)}
-          placeholder={t("candidates.list.searchPlaceholder")}
-          className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm placeholder:text-gray-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-        />
-      </div>
+      <section className="rounded-2xl border border-gray-200 bg-white p-3 shadow-sm sm:p-4">
+        <div className="relative">
+          <label className="sr-only" htmlFor="candidate-search">
+            {t("candidates.list.searchPlaceholder")}
+          </label>
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <input
+            id="candidate-search"
+            type="text"
+            aria-label={t("candidates.list.searchPlaceholder")}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder={t("candidates.list.searchPlaceholder")}
+            className="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 pl-10 pr-4 text-sm placeholder:text-gray-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          />
+        </div>
+      </section>
 
       {/* Table */}
       {isLoading ? (
@@ -114,8 +144,12 @@ export function CandidateListPage() {
       ) : candidates.length === 0 ? (
         <div className="rounded-lg border border-dashed border-gray-300 py-12 text-center">
           <Users className="mx-auto h-10 w-10 text-gray-400" />
-          <p className="mt-2 text-sm font-medium text-gray-900">{t("candidates.list.emptyTitle")}</p>
-          <p className="mt-1 text-sm text-gray-500">{t("candidates.list.emptyDescription")}</p>
+          <p className="mt-2 text-sm font-medium text-gray-900">
+            {t("candidates.list.emptyTitle")}
+          </p>
+          <p className="mt-1 text-sm text-gray-500">
+            {t("candidates.list.emptyDescription")}
+          </p>
           <Link
             to="/candidates/new"
             className="mt-4 inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700"
@@ -125,7 +159,7 @@ export function CandidateListPage() {
           </Link>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white -mx-4 lg:mx-0">
+        <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm -mx-4 lg:mx-0">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -165,7 +199,9 @@ export function CandidateListPage() {
                       {c.first_name} {c.last_name}
                     </Link>
                     {c.current_title && (
-                      <p className="text-xs text-gray-500 mt-0.5">{c.current_title}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        {c.current_title}
+                      </p>
                     )}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">
@@ -188,7 +224,9 @@ export function CandidateListPage() {
                     {c.experience_years != null ? (
                       <span className="inline-flex items-center gap-1">
                         <Clock className="h-3.5 w-3.5" />
-                        {t("candidates.list.years", { count: Number(c.experience_years) })}
+                        {t("candidates.list.years", {
+                          count: Number(c.experience_years),
+                        })}
                       </span>
                     ) : (
                       "--"
@@ -201,7 +239,9 @@ export function CandidateListPage() {
                       {enumLabel(t, "source", c.source)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">{formatDate(c.created_at)}</td>
+                  <td className="px-6 py-4 text-sm text-gray-500">
+                    {formatDate(c.created_at)}
+                  </td>
                   <td className="px-6 py-4 text-right">
                     <Link
                       to={`/candidates/${c.id}`}

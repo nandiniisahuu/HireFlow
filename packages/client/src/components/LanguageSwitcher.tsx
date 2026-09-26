@@ -49,7 +49,7 @@ export function LanguageSwitcher() {
         aria-label={t("nav.changeLanguage")}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className="inline-flex items-center gap-1.5 rounded-lg px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+        className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-transparent px-2.5 text-sm font-semibold text-slate-500 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-800 dark:text-slate-300 dark:hover:border-slate-700 dark:hover:bg-slate-800 dark:hover:text-white"
       >
         <Globe className="h-4 w-4" />
         <span className="hidden text-xs font-medium sm:inline">{activeLanguage.flag}</span>
@@ -58,7 +58,7 @@ export function LanguageSwitcher() {
       {open && (
         <ul
           role="listbox"
-          className="absolute end-0 z-50 mt-1 min-w-[10rem] overflow-hidden rounded-lg border border-gray-200 bg-white py-1 shadow-lg"
+          className="absolute end-0 z-50 mt-2 min-w-[11rem] overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl shadow-slate-950/10 dark:border-slate-700 dark:bg-slate-900"
         >
           {LANGUAGES.map((lng) => (
             <li key={lng.code}>
@@ -69,7 +69,7 @@ export function LanguageSwitcher() {
                 dir={lng.dir}
                 onClick={() => choose(lng.code)}
                 className={cn(
-                  "flex w-full items-center justify-between gap-3 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50",
+                  "flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800",
                   active === lng.code && "bg-brand-50 font-semibold text-brand-700",
                 )}
               >

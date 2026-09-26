@@ -29,7 +29,10 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatCard, type StatAccent } from "@/components/dashboard/StatCard";
-import { PipelineFunnel, type FunnelStageDatum } from "@/components/dashboard/PipelineFunnel";
+import {
+  PipelineFunnel,
+  type FunnelStageDatum,
+} from "@/components/dashboard/PipelineFunnel";
 import { AiInsights } from "@/components/dashboard/AiInsights";
 
 interface ConversionFunnelResponse {
@@ -63,8 +66,21 @@ interface DashboardInterview {
   panelist_names?: string[];
   round?: number;
 }
-interface RecruiterMetric { user_id: number; user_name?: string | null; function: string; applications: number; hires: number; conversion_rate: number; sla_breaches: number; }
-interface SourceMetric { source: string; total: number; hired: number; hireRate: number; }
+interface RecruiterMetric {
+  user_id: number;
+  user_name?: string | null;
+  function: string;
+  applications: number;
+  hires: number;
+  conversion_rate: number;
+  sla_breaches: number;
+}
+interface SourceMetric {
+  source: string;
+  total: number;
+  hired: number;
+  hireRate: number;
+}
 
 // Staff who get the recruiting overview: an admin role OR a user granted recruit
 // access via an EmpCloud custom role (recruit:* permission). A plain `employee`
@@ -72,7 +88,11 @@ interface SourceMetric { source: string; total: number; hired: number; hireRate:
 // so they get a referral-focused dashboard instead of admin tiles that read 0.
 
 export function DashboardPage() {
-  return canAccessRecruit(getUser()) ? <AdminDashboard /> : <EmployeeDashboard />;
+  return canAccessRecruit(getUser()) ? (
+    <AdminDashboard />
+  ) : (
+    <EmployeeDashboard />
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -97,41 +117,68 @@ function AdminDashboard() {
 
   const { data: closedJobsData, isLoading: closedJobsLoading } = useQuery({
     queryKey: ["dashboard-closed-jobs"],
-    queryFn: () => apiGet<PaginatedResponse<any>>("/jobs", { status: "closed", perPage: 1 }),
+    queryFn: () =>
+      apiGet<PaginatedResponse<any>>("/jobs", { status: "closed", perPage: 1 }),
   });
 
   // Fetch recent applications
   const { data: appsData, isLoading: appsLoading } = useQuery({
     queryKey: ["dashboard-applications"],
-    queryFn: () => apiGet<PaginatedResponse<any>>("/applications", { perPage: 10, sort: "applied_at", order: "desc" }),
+    queryFn: () =>
+      apiGet<PaginatedResponse<any>>("/applications", {
+        perPage: 10,
+        sort: "applied_at",
+        order: "desc",
+      }),
   });
   const { data: screeningData } = useQuery({
     queryKey: ["dashboard-action-screening"],
-    queryFn: () => apiGet<PaginatedResponse<any>>("/applications", { stage: "applied", perPage: 1 }),
+    queryFn: () =>
+      apiGet<PaginatedResponse<any>>("/applications", {
+        stage: "applied",
+        perPage: 1,
+      }),
   });
   const { data: rejectedData } = useQuery({
     queryKey: ["dashboard-pipeline-rejected"],
-    queryFn: () => apiGet<PaginatedResponse<any>>("/applications", { stage: "rejected", perPage: 1 }),
+    queryFn: () =>
+      apiGet<PaginatedResponse<any>>("/applications", {
+        stage: "rejected",
+        perPage: 1,
+      }),
   });
   const { data: hiredData } = useQuery({
     queryKey: ["dashboard-pipeline-hired"],
-    queryFn: () => apiGet<PaginatedResponse<any>>("/applications", { stage: "hired", perPage: 1 }),
+    queryFn: () =>
+      apiGet<PaginatedResponse<any>>("/applications", {
+        stage: "hired",
+        perPage: 1,
+      }),
   });
 
   const { data: pendingOffersData } = useQuery({
     queryKey: ["dashboard-action-offers"],
-    queryFn: () => apiGet<PaginatedResponse<any>>("/offers", { status: "pending_approval", limit: 1 }),
+    queryFn: () =>
+      apiGet<PaginatedResponse<any>>("/offers", {
+        status: "pending_approval",
+        limit: 1,
+      }),
   });
 
   const { data: interviewsData } = useQuery({
     queryKey: ["dashboard-upcoming-interviews"],
-    queryFn: () => apiGet<PaginatedResponse<DashboardInterview>>("/interviews", {
-      status: "scheduled", limit: 100, sort_field: "scheduled_at", sort_order: "asc",
-    }),
+    queryFn: () =>
+      apiGet<PaginatedResponse<DashboardInterview>>("/interviews", {
+        status: "scheduled",
+        limit: 100,
+        sort_field: "scheduled_at",
+        sort_order: "asc",
+      }),
   });
   const { data: recruiterMetricsRes } = useQuery({
     queryKey: ["dashboard-recruiter-performance"],
-    queryFn: () => apiGet<RecruiterMetric[]>("/recruitment-ops/recruiter-performance"),
+    queryFn: () =>
+      apiGet<RecruiterMetric[]>("/recruitment-ops/recruiter-performance"),
   });
   const recruiterMetrics = recruiterMetricsRes?.data ?? [];
   const { data: sourceMetricsRes } = useQuery({
@@ -147,16 +194,21 @@ function AdminDashboard() {
   // meaningless). One request now instead of six.
   const { data: funnelRes, isLoading: funnelLoading } = useQuery({
     queryKey: ["dashboard-conversion-funnel"],
-    queryFn: () => apiGet<ConversionFunnelResponse>("/analytics/conversion-funnel"),
+    queryFn: () =>
+      apiGet<ConversionFunnelResponse>("/analytics/conversion-funnel"),
   });
   const funnel = funnelRes?.data;
 
   const recentApps = appsData?.data?.data ?? [];
   const pipelineDisplayStages: FunnelStageDatum[] = funnel
     ? [
-        ...funnel.stages.filter((stage) => stage.stage !== "rejected").map((stage) =>
-          stage.stage === "hired" ? { ...stage, reached: hiredData?.data?.total ?? 0 } : stage,
-        ),
+        ...funnel.stages
+          .filter((stage) => stage.stage !== "rejected")
+          .map((stage) =>
+            stage.stage === "hired"
+              ? { ...stage, reached: hiredData?.data?.total ?? 0 }
+              : stage,
+          ),
         {
           stage: "rejected",
           reached: rejectedData?.data?.total ?? 0,
@@ -169,13 +221,17 @@ function AdminDashboard() {
   const today = new Date();
   const interviewsToday = scheduledInterviews.filter((interview) => {
     const scheduled = new Date(interview.scheduled_at);
-    return scheduled.getFullYear() === today.getFullYear()
-      && scheduled.getMonth() === today.getMonth()
-      && scheduled.getDate() === today.getDate();
+    return (
+      scheduled.getFullYear() === today.getFullYear() &&
+      scheduled.getMonth() === today.getMonth() &&
+      scheduled.getDate() === today.getDate()
+    );
   }).length;
   const actionItems = [
     {
-      label: t("dashboard.actionCenter.awaitingScreening", { count: screeningData?.data?.total ?? 0 }),
+      label: t("dashboard.actionCenter.awaitingScreening", {
+        count: screeningData?.data?.total ?? 0,
+      }),
       description: t("dashboard.actionCenter.screeningDescription"),
       icon: Users,
       to: "/applications",
@@ -183,7 +239,9 @@ function AdminDashboard() {
       iconTone: "bg-amber-500",
     },
     {
-      label: t("dashboard.actionCenter.interviewsToday", { count: interviewsToday }),
+      label: t("dashboard.actionCenter.interviewsToday", {
+        count: interviewsToday,
+      }),
       description: t("dashboard.actionCenter.interviewsDescription"),
       icon: Calendar,
       to: "/interviews",
@@ -191,7 +249,9 @@ function AdminDashboard() {
       iconTone: "bg-blue-500",
     },
     {
-      label: t("dashboard.actionCenter.offersNeedApproval", { count: pendingOffersData?.data?.total ?? 0 }),
+      label: t("dashboard.actionCenter.offersNeedApproval", {
+        count: pendingOffersData?.data?.total ?? 0,
+      }),
       description: t("dashboard.actionCenter.offersDescription"),
       icon: FileText,
       to: "/offers",
@@ -239,7 +299,11 @@ function AdminDashboard() {
     },
     {
       label: t("dashboard.stats.closedJobs"),
-      metric: { total: closedJobsData?.data?.total ?? 0, today: 0, deltaPct: null },
+      metric: {
+        total: closedJobsData?.data?.total ?? 0,
+        today: 0,
+        deltaPct: null,
+      },
       icon: Archive,
       accent: "slate",
       link: "/jobs?status=closed",
@@ -252,20 +316,29 @@ function AdminDashboard() {
           Postings header, and it reuses that page's `jobs.list.createJob` label
           so the two can never drift apart or be translated differently. */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#111a35] via-[#18244a] to-brand-900 px-5 py-7 text-white shadow-xl sm:px-7 sm:py-8 lg:px-9">
-        <div className="absolute -right-20 -top-24 h-72 w-72 rounded-full bg-brand-400/20 blur-3xl" aria-hidden="true" />
+        <div
+          className="absolute -right-20 -top-24 h-72 w-72 rounded-full bg-brand-400/20 blur-3xl"
+          aria-hidden="true"
+        />
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-        <div className="max-w-2xl">
-          <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-brand-200">Recruitment overview</p>
-          <h1 className="text-pretty text-3xl font-bold tracking-[-0.04em] sm:text-4xl">{t("dashboard.title")}</h1>
-          <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300 sm:text-base">{t("dashboard.subtitle")}</p>
-        </div>
-        <Link
-          to="/jobs/new"
-          className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 self-start rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-brand-800 shadow-sm transition-[background-color,box-shadow,transform] hover:-translate-y-0.5 hover:bg-brand-50 hover:shadow-md sm:self-auto"
-        >
-          <Plus className="h-4 w-4" aria-hidden="true" />
-          {t("jobs.list.createJob")}
-        </Link>
+          <div className="max-w-2xl">
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-brand-200">
+              Recruitment overview
+            </p>
+            <h1 className="text-pretty text-3xl font-bold tracking-[-0.04em] sm:text-4xl">
+              {t("dashboard.title")}
+            </h1>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300 sm:text-base">
+              {t("dashboard.subtitle")}
+            </p>
+          </div>
+          <Link
+            to="/jobs/new"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 self-start rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-brand-800 shadow-sm transition-[background-color,box-shadow,transform] hover:-translate-y-0.5 hover:bg-brand-50 hover:shadow-md sm:self-auto"
+          >
+            <Plus className="h-4 w-4" aria-hidden="true" />
+            {t("jobs.list.createJob")}
+          </Link>
         </div>
       </div>
 
@@ -280,7 +353,9 @@ function AdminDashboard() {
             accent={stat.accent}
             to={stat.link}
             deltaPct={stat.metric?.deltaPct}
-            isLoading={statsLoading || (stat.accent === "slate" && closedJobsLoading)}
+            isLoading={
+              statsLoading || (stat.accent === "slate" && closedJobsLoading)
+            }
           />
         ))}
       </div>
@@ -294,7 +369,9 @@ function AdminDashboard() {
           <CardHeader className="flex-col items-start gap-3 space-y-0 border-b border-gray-100 pb-5 min-[430px]:flex-row min-[430px]:items-center min-[430px]:justify-between">
             <CardTitle>{t("dashboard.pipelineDistribution")}</CardTitle>
             <Badge variant="secondary">
-              {t("dashboard.totalCount", { count: funnel?.stages?.[0]?.reached ?? 0 })}
+              {t("dashboard.totalCount", {
+                count: funnel?.stages?.[0]?.reached ?? 0,
+              })}
             </Badge>
           </CardHeader>
           <CardContent className="p-3 sm:p-6">
@@ -325,65 +402,77 @@ function AdminDashboard() {
             </Link>
           </CardHeader>
           <CardContent className="flex-1">
-          {appsLoading ? (
-            <div className="space-y-3" aria-label={t("dashboard.loading")}>
-              {[0, 1, 2].map((row) => (
-                <div key={row} className="h-16 animate-pulse rounded-xl bg-gray-100" />
-              ))}
-            </div>
-          ) : recentApps.length === 0 ? (
-            <p className="py-8 text-center text-sm text-gray-500">{t("dashboard.noApplications")}</p>
-          ) : (
-            // Ten rows fetched, five in view: the container is capped at five
-            // row-heights (66px row + 12px gap) and scrolls for the rest.
-            // pr-1 keeps the scrollbar off the row borders; -mr-1 gives that
-            // padding back so the rows stay flush with the card.
-            <div
-              className="-mr-1 space-y-3 overflow-y-auto pr-1"
-              style={{ maxHeight: 5 * 60 + 4 * 12 }}
-              tabIndex={0}
-              role="group"
-              aria-label={t("dashboard.recentApplications")}
-            >
-              {/* #28 — each row now links to the candidate's detail page.
+            {appsLoading ? (
+              <div className="space-y-3" aria-label={t("dashboard.loading")}>
+                {[0, 1, 2].map((row) => (
+                  <div
+                    key={row}
+                    className="h-16 animate-pulse rounded-xl bg-gray-100"
+                  />
+                ))}
+              </div>
+            ) : recentApps.length === 0 ? (
+              <p className="py-8 text-center text-sm text-gray-500">
+                {t("dashboard.noApplications")}
+              </p>
+            ) : (
+              // Ten rows fetched, five in view: the container is capped at five
+              // row-heights (66px row + 12px gap) and scrolls for the rest.
+              // pr-1 keeps the scrollbar off the row borders; -mr-1 gives that
+              // padding back so the rows stay flush with the card.
+              <div
+                className="-mr-1 space-y-3 overflow-y-auto pr-1"
+                style={{ maxHeight: 5 * 60 + 4 * 12 }}
+                tabIndex={0}
+                role="group"
+                aria-label={t("dashboard.recentApplications")}
+              >
+                {/* #28 — each row now links to the candidate's detail page.
                   Falls back to the job detail if candidate_id is somehow
                   missing on legacy rows. */}
-              {recentApps.map((app: any) => (
-                <Link
-                  key={app.id}
-                  to={app.candidate_id ? `/candidates/${app.candidate_id}` : `/jobs/${app.job_id}`}
-                  className="flex flex-col gap-3 rounded-xl border border-gray-100 p-3 transition-colors hover:border-brand-200 hover:bg-gray-50 sm:flex-row sm:items-center sm:justify-between"
-                >
-                  <div className="flex min-w-0 flex-1 items-center gap-3">
-                    <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700">
-                      {`${app.candidate_first_name?.[0] ?? ""}${app.candidate_last_name?.[0] ?? ""}`.toUpperCase()}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-gray-900">
-                        {app.candidate_first_name} {app.candidate_last_name}
-                      </p>
-                      <p className="truncate text-xs text-gray-500">{app.job_title}</p>
+                {recentApps.map((app: any) => (
+                  <Link
+                    key={app.id}
+                    to={
+                      app.candidate_id
+                        ? `/candidates/${app.candidate_id}`
+                        : `/jobs/${app.job_id}`
+                    }
+                    className="flex flex-col gap-3 rounded-xl border border-gray-100 p-3 transition-colors hover:border-brand-200 hover:bg-gray-50 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div className="flex min-w-0 flex-1 items-center gap-3">
+                      <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-brand-50 text-xs font-semibold text-brand-700">
+                        {`${app.candidate_first_name?.[0] ?? ""}${app.candidate_last_name?.[0] ?? ""}`.toUpperCase()}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium text-gray-900">
+                          {app.candidate_first_name} {app.candidate_last_name}
+                        </p>
+                        <p className="truncate text-xs text-gray-500">
+                          {app.job_title}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex w-full items-center justify-between gap-3 sm:ml-4 sm:w-auto sm:justify-end">
-                    <span
-                      className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize"
-                      style={{
-                        backgroundColor: stageColor(app.stage, pipelineStages) + "22",
-                        color: stageColor(app.stage, pipelineStages),
-                      }}
-                    >
-                      {t(`dashboard.stages.${app.stage}`)}
-                    </span>
-                    <span className="text-xs text-gray-400 inline-flex items-center gap-1 whitespace-nowrap">
-                      <Calendar className="h-3 w-3" />
-                      {formatDate(app.applied_at)}
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
+                    <div className="flex w-full items-center justify-between gap-3 sm:ml-4 sm:w-auto sm:justify-end">
+                      <span
+                        className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize"
+                        style={{
+                          backgroundColor:
+                            stageColor(app.stage, pipelineStages) + "22",
+                          color: stageColor(app.stage, pipelineStages),
+                        }}
+                      >
+                        {t(`dashboard.stages.${app.stage}`)}
+                      </span>
+                      <span className="text-xs text-gray-400 inline-flex items-center gap-1 whitespace-nowrap">
+                        <Calendar className="h-3 w-3" />
+                        {formatDate(app.applied_at)}
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -396,20 +485,39 @@ function AdminDashboard() {
               <Link
                 key={item.to}
                 to={item.to}
-                className={cn("group flex flex-1 items-center gap-3 rounded-xl border p-3 transition-[transform,box-shadow,border-color,background-color] hover:-translate-y-0.5 hover:shadow-sm", item.tone)}
+                className={cn(
+                  "group flex flex-1 items-center gap-3 rounded-xl border p-3 transition-[transform,box-shadow,border-color,background-color] hover:-translate-y-0.5 hover:shadow-sm",
+                  item.tone,
+                )}
               >
-                <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white shadow-sm", item.iconTone)}>
+                <span
+                  className={cn(
+                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white shadow-sm",
+                    item.iconTone,
+                  )}
+                >
                   <item.icon className="h-5 w-5" aria-hidden="true" />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-semibold text-gray-900">{item.label}</span>
-                  <span className="mt-0.5 block truncate text-xs text-gray-500">{item.description}</span>
+                  <span className="block text-sm font-semibold text-gray-900">
+                    {item.label}
+                  </span>
+                  <span className="mt-0.5 block truncate text-xs text-gray-500">
+                    {item.description}
+                  </span>
                 </span>
-                <ChevronRight className="h-4 w-4 shrink-0 text-gray-400 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+                <ChevronRight
+                  className="h-4 w-4 shrink-0 text-gray-400 transition-transform group-hover:translate-x-0.5"
+                  aria-hidden="true"
+                />
               </Link>
             ))}
-            <Link to="/applications" className="mt-auto flex w-full items-center justify-center gap-1 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-brand-600 transition-colors hover:border-brand-300 hover:bg-brand-50">
-              {t("dashboard.actionCenter.viewAll")} <ChevronRight className="h-4 w-4" />
+            <Link
+              to="/applications"
+              className="mt-auto flex w-full items-center justify-center gap-1 rounded-lg border border-gray-200 px-3 py-2 text-sm font-medium text-brand-600 transition-colors hover:border-brand-300 hover:bg-brand-50"
+            >
+              {t("dashboard.actionCenter.viewAll")}{" "}
+              <ChevronRight className="h-4 w-4" />
             </Link>
           </CardContent>
         </Card>
@@ -420,14 +528,120 @@ function AdminDashboard() {
         </div>
       </div>
 
-      {recruiterMetrics.length > 0 && <Card className="overflow-hidden rounded-2xl">
-        <CardHeader className="flex-col items-start gap-3 border-b border-gray-100 min-[430px]:flex-row min-[430px]:items-center min-[430px]:justify-between"><CardTitle>Recruiter &amp; Sourcing Performance</CardTitle><Link className="text-sm font-semibold text-brand-600 hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500" to="/recruitment-operations">Manage Operations</Link></CardHeader>
-        <CardContent className="p-0"><div className="overflow-x-auto"><table className="w-full min-w-[680px] text-left text-sm"><thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500"><tr>{["User", "Team", "Applicants", "Hires", "Conversion", "SLA breaches"].map((heading) => <th key={heading} className="px-5 py-3 font-semibold">{heading}</th>)}</tr></thead><tbody className="divide-y divide-gray-100">{recruiterMetrics.slice(0, 8).map((metric) => <tr className="transition-colors hover:bg-gray-50" key={metric.user_id}><td className="px-5 py-4 font-semibold">{metric.user_name || metric.user_id}</td><td className="px-5 py-4">{metric.function}</td><td className="px-5 py-4 tabular-nums">{metric.applications}</td><td className="px-5 py-4 tabular-nums">{metric.hires}</td><td className="px-5 py-4 font-semibold tabular-nums">{metric.conversion_rate}%</td><td className="px-5 py-4 tabular-nums">{metric.sla_breaches}</td></tr>)}</tbody></table></div></CardContent>
-      </Card>}
+      {recruiterMetrics.length > 0 && (
+        <Card className="overflow-hidden rounded-2xl">
+          <CardHeader className="flex-col items-start gap-3 border-b border-gray-100 min-[430px]:flex-row min-[430px]:items-center min-[430px]:justify-between">
+            <CardTitle>Recruiter &amp; Sourcing Performance</CardTitle>
+            <Link
+              className="text-sm font-semibold text-brand-600 hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+              to="/recruitment-operations"
+            >
+              Manage Operations
+            </Link>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[680px] text-left text-sm">
+                <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
+                  <tr>
+                    {[
+                      "User",
+                      "Team",
+                      "Applicants",
+                      "Hires",
+                      "Conversion",
+                      "SLA breaches",
+                    ].map((heading) => (
+                      <th key={heading} className="px-5 py-3 font-semibold">
+                        {heading}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {recruiterMetrics.slice(0, 8).map((metric) => (
+                    <tr
+                      className="transition-colors hover:bg-gray-50"
+                      key={metric.user_id}
+                    >
+                      <td className="px-5 py-4 font-semibold">
+                        {metric.user_name || metric.user_id}
+                      </td>
+                      <td className="px-5 py-4">{metric.function}</td>
+                      <td className="px-5 py-4 tabular-nums">
+                        {metric.applications}
+                      </td>
+                      <td className="px-5 py-4 tabular-nums">{metric.hires}</td>
+                      <td className="px-5 py-4 font-semibold tabular-nums">
+                        {metric.conversion_rate}%
+                      </td>
+                      <td className="px-5 py-4 tabular-nums">
+                        {metric.sla_breaches}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card className="overflow-hidden rounded-2xl">
-        <CardHeader className="flex-row items-center justify-between border-b border-gray-100"><CardTitle>Applicant Source Performance</CardTitle><Link className="text-sm font-semibold text-brand-600 hover:text-brand-700" to="/analytics">Full analytics</Link></CardHeader>
-        <CardContent className="p-0"><div className="overflow-x-auto"><table className="w-full min-w-[560px] text-left text-sm"><thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500"><tr>{["Source", "Applicants", "Hires", "Hire rate"].map((heading) => <th key={heading} className="px-5 py-3 font-semibold">{heading}</th>)}</tr></thead><tbody className="divide-y divide-gray-100">{sourceMetrics.length ? sourceMetrics.map((metric) => <tr key={metric.source}><td className="px-5 py-4 font-semibold">{metric.source === "linkedin" ? "LinkedIn" : metric.source.charAt(0).toUpperCase() + metric.source.slice(1)}</td><td className="px-5 py-4 tabular-nums">{metric.total}</td><td className="px-5 py-4 tabular-nums">{metric.hired}</td><td className="px-5 py-4 font-semibold tabular-nums">{metric.hireRate}%</td></tr>) : <tr><td colSpan={4} className="px-5 py-8 text-center text-gray-500">No applicant source data is available yet.</td></tr>}</tbody></table></div></CardContent>
+        <CardHeader className="flex-row items-center justify-between border-b border-gray-100">
+          <CardTitle>Applicant Source Performance</CardTitle>
+          <Link
+            className="text-sm font-semibold text-brand-600 hover:text-brand-700"
+            to="/analytics"
+          >
+            Full analytics
+          </Link>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[560px] text-left text-sm">
+              <thead className="bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
+                <tr>
+                  {["Source", "Applicants", "Hires", "Hire rate"].map(
+                    (heading) => (
+                      <th key={heading} className="px-5 py-3 font-semibold">
+                        {heading}
+                      </th>
+                    ),
+                  )}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {sourceMetrics.length ? (
+                  sourceMetrics.map((metric) => (
+                    <tr key={metric.source}>
+                      <td className="px-5 py-4 font-semibold">
+                        {metric.source === "linkedin"
+                          ? "LinkedIn"
+                          : metric.source.charAt(0).toUpperCase() +
+                            metric.source.slice(1)}
+                      </td>
+                      <td className="px-5 py-4 tabular-nums">{metric.total}</td>
+                      <td className="px-5 py-4 tabular-nums">{metric.hired}</td>
+                      <td className="px-5 py-4 font-semibold tabular-nums">
+                        {metric.hireRate}%
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      className="px-5 py-8 text-center text-gray-500"
+                    >
+                      No applicant source data is available yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
       </Card>
     </div>
   );
@@ -479,7 +693,12 @@ function EmployeeDashboard() {
   });
   const { data: assignedInterviewsRes } = useQuery({
     queryKey: ["my-panelist-interviews"],
-    queryFn: () => apiGet<PaginatedResponse<DashboardInterview>>("/interviews", { limit: 10, sort_field: "scheduled_at", sort_order: "asc" }),
+    queryFn: () =>
+      apiGet<PaginatedResponse<DashboardInterview>>("/interviews", {
+        limit: 10,
+        sort_field: "scheduled_at",
+        sort_order: "asc",
+      }),
   });
   const assignedInterviews = assignedInterviewsRes?.data?.data ?? [];
 
@@ -492,45 +711,97 @@ function EmployeeDashboard() {
   const pendingApprovals = approvalsRes?.data ?? [];
 
   const actOnOffer = useMutation({
-    mutationFn: ({ id, action }: { id: string; action: "approve" | "reject" }) =>
-      apiPost(`/offers/${id}/${action}`, {}),
+    mutationFn: ({
+      id,
+      action,
+    }: {
+      id: string;
+      action: "approve" | "reject";
+    }) => apiPost(`/offers/${id}/${action}`, {}),
     onSuccess: (_res, vars) => {
       toast.success(
-        vars.action === "approve" ? t("dashboard.approvals.toastApproved") : t("dashboard.approvals.toastRejected"),
+        vars.action === "approve"
+          ? t("dashboard.approvals.toastApproved")
+          : t("dashboard.approvals.toastRejected"),
       );
       queryClient.invalidateQueries({ queryKey: ["my-offer-approvals"] });
     },
-    onError: (err: any) => toast.error(err?.response?.data?.error?.message || t("dashboard.approvals.toastActionFailed")),
+    onError: (err: any) =>
+      toast.error(
+        err?.response?.data?.error?.message ||
+          t("dashboard.approvals.toastActionFailed"),
+      ),
   });
 
   const referrals: ReferralRow[] = refData?.data ?? [];
   const total = referrals.length;
-  const inReview = referrals.filter((r) => ["submitted", "under_review"].includes(r.status)).length;
+  const inReview = referrals.filter((r) =>
+    ["submitted", "under_review"].includes(r.status),
+  ).length;
   const hired = referrals.filter((r) => r.status === "hired").length;
-  const rewarded = referrals.filter((r) => ["bonus_eligible", "bonus_paid"].includes(r.status)).length;
+  const rewarded = referrals.filter((r) =>
+    ["bonus_eligible", "bonus_paid"].includes(r.status),
+  ).length;
 
   // Each card deep-links to the referral list pre-filtered to the SAME statuses
   // its number counts — In Review and Bonus each span two statuses, so filtering
   // on just one showed a list that didn't match the count (BUG-010).
   // No trend data exists for a single employee's referrals, so these tiles get
   // the same card treatment with the sparkline omitted rather than an invented one.
-  const stats: Array<{ label: string; value: number; icon: typeof Gift; accent: StatAccent; link: string }> = [
-    { label: t("dashboard.stats.myReferrals"), value: total, icon: Gift, accent: "indigo", link: "/referrals" },
-    { label: t("dashboard.stats.inReview"), value: inReview, icon: Clock, accent: "orange", link: "/referrals?status=submitted,under_review" },
-    { label: t("dashboard.stats.hired"), value: hired, icon: CheckCircle2, accent: "aqua", link: "/referrals?status=hired" },
-    { label: t("dashboard.stats.bonus"), value: rewarded, icon: Award, accent: "magenta", link: "/referrals?status=bonus_eligible,bonus_paid" },
+  const stats: Array<{
+    label: string;
+    value: number;
+    icon: typeof Gift;
+    accent: StatAccent;
+    link: string;
+  }> = [
+    {
+      label: t("dashboard.stats.myReferrals"),
+      value: total,
+      icon: Gift,
+      accent: "indigo",
+      link: "/referrals",
+    },
+    {
+      label: t("dashboard.stats.inReview"),
+      value: inReview,
+      icon: Clock,
+      accent: "orange",
+      link: "/referrals?status=submitted,under_review",
+    },
+    {
+      label: t("dashboard.stats.hired"),
+      value: hired,
+      icon: CheckCircle2,
+      accent: "aqua",
+      link: "/referrals?status=hired",
+    },
+    {
+      label: t("dashboard.stats.bonus"),
+      value: rewarded,
+      icon: Award,
+      accent: "magenta",
+      link: "/referrals?status=bonus_eligible,bonus_paid",
+    },
   ];
 
   return (
     <div className="mx-auto w-full max-w-[1500px] space-y-5 sm:space-y-6">
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#111a35] via-[#18244a] to-brand-900 px-5 py-7 text-white shadow-xl sm:px-8 sm:py-9">
-        <div className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-brand-400/20 blur-3xl" aria-hidden="true" />
+        <div
+          className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-brand-400/20 blur-3xl"
+          aria-hidden="true"
+        />
         <div className="relative max-w-2xl">
-        <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-brand-200">{t("dashboard.welcome", { name: firstName })}</p>
-        <h1 className="text-pretty text-3xl font-bold tracking-[-0.04em] sm:text-4xl">{t("dashboard.title")}</h1>
-        <p className="mt-3 text-sm leading-6 text-slate-300 sm:text-base">
-          {t("dashboard.employeeSubtitle")}
-        </p>
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-brand-200">
+            {t("dashboard.welcome", { name: firstName })}
+          </p>
+          <h1 className="text-pretty text-3xl font-bold tracking-[-0.04em] sm:text-4xl">
+            {t("dashboard.title")}
+          </h1>
+          <p className="mt-3 text-sm leading-6 text-slate-300 sm:text-base">
+            {t("dashboard.employeeSubtitle")}
+          </p>
         </div>
       </div>
 
@@ -570,7 +841,9 @@ function EmployeeDashboard() {
                 className="flex flex-col items-stretch justify-between gap-3 rounded-xl border border-gray-100 p-4 sm:flex-row sm:items-center"
               >
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-gray-900">{offer.candidate_name}</p>
+                  <p className="truncate text-sm font-medium text-gray-900">
+                    {offer.candidate_name}
+                  </p>
                   <p className="truncate text-xs text-gray-500">
                     {offer.job_title_display}
                     {offer.salary_amount
@@ -580,7 +853,9 @@ function EmployeeDashboard() {
                 </div>
                 <div className="grid shrink-0 grid-cols-2 gap-2 sm:flex sm:items-center">
                   <button
-                    onClick={() => actOnOffer.mutate({ id: offer.id, action: "approve" })}
+                    onClick={() =>
+                      actOnOffer.mutate({ id: offer.id, action: "approve" })
+                    }
                     disabled={actOnOffer.isPending}
                     className="inline-flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-700 disabled:opacity-50 transition-colors"
                   >
@@ -588,7 +863,9 @@ function EmployeeDashboard() {
                     {t("dashboard.approvals.approve")}
                   </button>
                   <button
-                    onClick={() => actOnOffer.mutate({ id: offer.id, action: "reject" })}
+                    onClick={() =>
+                      actOnOffer.mutate({ id: offer.id, action: "reject" })
+                    }
                     disabled={actOnOffer.isPending}
                     className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
                   >
@@ -613,8 +890,12 @@ function EmployeeDashboard() {
               <Gift className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-900">{t("dashboard.referSomeone")}</p>
-              <p className="text-xs text-gray-500">{t("dashboard.recommendCandidate")}</p>
+              <p className="text-sm font-semibold text-gray-900">
+                {t("dashboard.referSomeone")}
+              </p>
+              <p className="text-xs text-gray-500">
+                {t("dashboard.recommendCandidate")}
+              </p>
             </div>
           </div>
           <ArrowUpRight className="h-4 w-4 text-gray-300 transition-colors group-hover:text-brand-500" />
@@ -622,15 +903,57 @@ function EmployeeDashboard() {
       </div>
 
       {/* My recent referrals */}
-      {assignedInterviews.length > 0 && <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
-        <div className="mb-4 flex items-center justify-between"><h2 className="text-lg font-semibold text-gray-900">My assigned interviews</h2><Link to="/interviews" className="text-sm text-brand-600">View all</Link></div>
-        <div className="space-y-3">{assignedInterviews.map((interview) => <Link key={interview.id} to={`/interviews/${interview.id}`} className="flex flex-col gap-2 rounded-xl border border-gray-100 p-3 hover:border-brand-300 sm:flex-row sm:items-center sm:justify-between"><div className="min-w-0"><p className="truncate text-sm font-medium text-gray-900">{interview.title || "Interview"}</p><p className="truncate text-xs text-gray-500">{interview.candidate_name || "Candidate"}</p><p className="truncate text-xs text-gray-500">Panelists ({interview.panelist_count || 0}): {interview.panelist_names?.join(", ") || "None assigned"}</p><p className="text-xs text-gray-500">Round {interview.round || 1} · {interview.status ? enumLabel(t, "interviewStatus", interview.status) : "Scheduled"}</p></div><span className="shrink-0 text-xs font-medium text-brand-600">View details · {formatDate(interview.scheduled_at)} at {formatTime(interview.scheduled_at)}</span></Link>)}</div>
-      </div>}
+      {assignedInterviews.length > 0 && (
+        <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-900">
+              My assigned interviews
+            </h2>
+            <Link to="/interviews" className="text-sm text-brand-600">
+              View all
+            </Link>
+          </div>
+          <div className="space-y-3">
+            {assignedInterviews.map((interview) => (
+              <Link
+                key={interview.id}
+                to={`/interviews/${interview.id}`}
+                className="flex flex-col gap-2 rounded-xl border border-gray-100 p-3 hover:border-brand-300 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-gray-900">
+                    {interview.title || "Interview"}
+                  </p>
+                  <p className="truncate text-xs text-gray-500">
+                    {interview.candidate_name || "Candidate"}
+                  </p>
+                  <p className="truncate text-xs text-gray-500">
+                    Panelists ({interview.panelist_count || 0}):{" "}
+                    {interview.panelist_names?.join(", ") || "None assigned"}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    Round {interview.round || 1} ·{" "}
+                    {interview.status
+                      ? enumLabel(t, "interviewStatus", interview.status)
+                      : "Scheduled"}
+                  </p>
+                </div>
+                <span className="shrink-0 text-xs font-medium text-brand-600">
+                  View details · {formatDate(interview.scheduled_at)} at{" "}
+                  {formatTime(interview.scheduled_at)}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* My recent referrals */}
       <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">{t("dashboard.myReferralsTitle")}</h2>
+          <h2 className="text-lg font-semibold text-gray-900">
+            {t("dashboard.myReferralsTitle")}
+          </h2>
           <Link
             to="/referrals"
             className="inline-flex items-center gap-1 text-sm text-brand-600 hover:text-brand-700"
@@ -640,13 +963,18 @@ function EmployeeDashboard() {
         </div>
 
         {isLoading ? (
-          <p className="py-8 text-center text-sm text-gray-400">{t("dashboard.loading")}</p>
+          <p className="py-8 text-center text-sm text-gray-400">
+            {t("dashboard.loading")}
+          </p>
         ) : referrals.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-10 text-center">
             <Gift className="h-10 w-10 text-gray-300" />
             <p className="mt-3 text-sm text-gray-500">
               {t("dashboard.noReferralsYet")}{" "}
-              <Link to="/referrals" className="font-medium text-brand-600 hover:text-brand-700">
+              <Link
+                to="/referrals"
+                className="font-medium text-brand-600 hover:text-brand-700"
+              >
                 {t("dashboard.referSomeoneLink")}
               </Link>
               .
@@ -660,14 +988,19 @@ function EmployeeDashboard() {
                 className="flex flex-col gap-3 rounded-xl border border-gray-100 p-3 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-gray-900">{ref.candidate_name}</p>
-                  <p className="truncate text-xs text-gray-500">{ref.job_title}</p>
+                  <p className="truncate text-sm font-medium text-gray-900">
+                    {ref.candidate_name}
+                  </p>
+                  <p className="truncate text-xs text-gray-500">
+                    {ref.job_title}
+                  </p>
                 </div>
                 <div className="flex items-center justify-between gap-3 sm:ml-4 sm:justify-end">
                   <span
                     className={cn(
                       "inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium capitalize",
-                      REF_STATUS_BADGE[ref.status] ?? "bg-gray-100 text-gray-700",
+                      REF_STATUS_BADGE[ref.status] ??
+                        "bg-gray-100 text-gray-700",
                     )}
                   >
                     {t(`dashboard.referralStatus.${ref.status}`)}

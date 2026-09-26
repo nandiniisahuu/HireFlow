@@ -41,31 +41,31 @@ export function Pagination({
   return (
     <div
       className={cn(
-        "flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between",
+        "flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between dark:border-slate-800",
         className,
       )}
     >
-      <p className="text-sm text-gray-500">
+      <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
         {t("components.pagination.showing", { start, end, total })}
       </p>
       {showControls && (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={() => onPageChange(page - 1)}
             disabled={page <= 1}
-            className="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
           >
             <ChevronLeft className="h-4 w-4" /> {t("components.pagination.previous")}
           </button>
-          <span className="whitespace-nowrap text-sm text-gray-500">
+          <span className="mx-1 whitespace-nowrap rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300">
             {t("components.pagination.pageOf", { page, total: totalPages })}
           </span>
           <button
             type="button"
             onClick={() => onPageChange(page + 1)}
             disabled={page >= totalPages}
-            className="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
           >
             {t("components.pagination.next")} <ChevronRight className="h-4 w-4" />
           </button>

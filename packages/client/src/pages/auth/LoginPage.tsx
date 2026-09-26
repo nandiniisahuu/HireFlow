@@ -57,13 +57,13 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="auth-shell flex min-h-screen">
       {/* Language switcher — top corner, before login */}
       <div className="absolute end-4 top-4 z-10">
         <LanguageSwitcher />
       </div>
       {/* Left panel — brand */}
-      <div className="hidden lg:flex lg:w-1/2 items-center justify-center bg-gradient-to-br from-brand-600 to-brand-800 p-12">
+      <div className="hidden lg:flex lg:w-1/2 items-center justify-center p-12">
         <div className="max-w-md text-white">
           <div className="flex items-center gap-3 mb-8">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20">
@@ -89,17 +89,17 @@ export function LoginPage() {
       </div>
 
       {/* Right panel — form */}
-      <div className="flex w-full lg:w-1/2 items-center justify-center bg-gray-50 px-4">
+      <div className="flex w-full lg:w-1/2 items-center justify-center bg-gray-50/95 px-4 py-10 backdrop-blur-sm">
         <div className="w-full max-w-sm">
           {/* Mobile logo */}
           <div className="mb-8 flex items-center justify-center gap-3 lg:hidden">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 shadow-lg shadow-brand-600/20">
               <Briefcase className="h-6 w-6 text-white" />
             </div>
             <span className="text-xl font-bold text-gray-900">HireFlow</span>
           </div>
 
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="auth-panel rounded-xl border border-gray-200 bg-white p-6 sm:p-8">
             <h2 className="text-2xl font-bold text-gray-900">{t("auth.welcomeBack")}</h2>
             <p className="mt-1 text-sm text-gray-500">
               {t("auth.signInSubtitle")}

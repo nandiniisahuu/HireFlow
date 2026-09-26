@@ -1,18 +1,3 @@
-/**
- * shadcn/ui — Card
- *
- * Standard shadcn component API (Card / CardHeader / CardTitle /
- * CardDescription / CardContent / CardFooter), with one deliberate change: the
- * classes use this app's palette utilities (`bg-white`, `border-gray-200`,
- * `text-gray-900`) instead of shadcn's CSS-variable tokens (`bg-card`,
- * `text-card-foreground`).
- *
- * Why: dark mode here is implemented in styles/globals.css by remapping those
- * utilities under `.dark` (`.dark .bg-white { … }`) rather than by defining a
- * token layer. Components written against `bg-card` would render with no
- * background at all in this project, and adding the token layer would mean
- * re-theming all 25+ existing pages. Same component contract, correct theme.
- */
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
@@ -20,7 +5,10 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("rounded-xl border border-gray-200 bg-white text-gray-900 shadow-sm", className)}
+      className={cn(
+        "rounded-2xl border border-slate-200/80 bg-white text-slate-900 shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-[border-color,box-shadow] duration-200 dark:border-slate-800 dark:bg-[#101a2e] dark:text-slate-100",
+        className,
+      )}
       {...props}
     />
   ),
@@ -29,39 +17,30 @@ Card.displayName = "Card";
 
 const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex flex-col space-y-1.5 p-6", className)} {...props} />
+    <div ref={ref} className={cn("flex flex-col space-y-1.5 p-5 sm:p-6", className)} {...props} />
   ),
 );
 CardHeader.displayName = "CardHeader";
 
 const CardTitle = React.forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadingElement>>(
   ({ className, ...props }, ref) => (
-    <h3
-      ref={ref}
-      className={cn("text-lg font-semibold leading-none tracking-tight text-gray-900", className)}
-      {...props}
-    />
+    <h3 ref={ref} className={cn("text-base font-semibold leading-6 tracking-tight text-slate-900 dark:text-white", className)} {...props} />
   ),
 );
 CardTitle.displayName = "CardTitle";
 
-const CardDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
-  <p ref={ref} className={cn("text-sm text-gray-500", className)} {...props} />
-));
+const CardDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
+  ({ className, ...props }, ref) => <p ref={ref} className={cn("text-sm leading-5 text-slate-500 dark:text-slate-400", className)} {...props} />,
+);
 CardDescription.displayName = "CardDescription";
 
 const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />,
+  ({ className, ...props }, ref) => <div ref={ref} className={cn("p-5 pt-0 sm:p-6 sm:pt-0", className)} {...props} />,
 );
 CardContent.displayName = "CardContent";
 
 const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex items-center p-6 pt-0", className)} {...props} />
-  ),
+  ({ className, ...props }, ref) => <div ref={ref} className={cn("flex items-center p-5 pt-0 sm:p-6 sm:pt-0", className)} {...props} />,
 );
 CardFooter.displayName = "CardFooter";
 

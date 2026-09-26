@@ -251,14 +251,14 @@ export function BulkImportJobsModal({ open, onClose, onImported }: BulkImportJob
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      className="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4"
       onClick={close}
       role="dialog"
       aria-modal="true"
       aria-label={t("components.bulkImportJobs.ariaLabel")}
     >
       <div
-        className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-xl bg-white shadow-xl"
+        className="modal-surface flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -270,7 +270,7 @@ export function BulkImportJobsModal({ open, onClose, onImported }: BulkImportJob
           <button
             onClick={close}
             disabled={importing}
-            className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 disabled:opacity-50"
+            className="icon-button rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-white disabled:opacity-50"
             aria-label={t("components.bulkImportJobs.close")}
           >
             <X className="h-5 w-5" />
@@ -282,7 +282,7 @@ export function BulkImportJobsModal({ open, onClose, onImported }: BulkImportJob
           {/* Results view */}
           {results ? (
             <div className="space-y-4">
-              <div className="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 px-4 py-3">
+              <div className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50/80 px-4 py-3 dark:border-emerald-500/20 dark:bg-emerald-500/10">
                 <CheckCircle2 className="h-6 w-6 flex-shrink-0 text-green-600" />
                 <div>
                   <p className="text-sm font-medium text-green-800">
@@ -297,7 +297,7 @@ export function BulkImportJobsModal({ open, onClose, onImported }: BulkImportJob
               </div>
 
               {results.failed.length > 0 && (
-                <div className="rounded-lg border border-gray-200">
+                <div className="rounded-xl border border-slate-200 dark:border-slate-800">
                   <div className="border-b border-gray-200 bg-gray-50 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-gray-500">
                     {t("components.bulkImportJobs.failedRows")}
                   </div>
@@ -321,7 +321,7 @@ export function BulkImportJobsModal({ open, onClose, onImported }: BulkImportJob
           ) : (
             <div className="space-y-4">
               {/* Instructions + template */}
-              <div className="flex items-start justify-between gap-4 rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
+              <div className="flex items-start justify-between gap-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-gray-50 px-4 py-3">
                 <p className="text-sm text-gray-600">
                   {t("components.bulkImportJobs.columnsPrefix")}{" "}
                   <code className="rounded bg-gray-200 px-1 text-xs">title</code>,{" "}
@@ -331,7 +331,7 @@ export function BulkImportJobsModal({ open, onClose, onImported }: BulkImportJob
                 <button
                   onClick={downloadTemplate}
                   disabled={templateLoading}
-                  className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                  className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
                 >
                   {templateLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
                   {t("components.bulkImportJobs.template")}
@@ -342,7 +342,7 @@ export function BulkImportJobsModal({ open, onClose, onImported }: BulkImportJob
               <button
                 type="button"
                 onClick={() => fileRef.current?.click()}
-                className="flex w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 px-4 py-8 text-center hover:border-brand-400 hover:bg-brand-50/40"
+                className="flex w-full flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/50 px-4 py-8 text-center hover:border-brand-400 hover:bg-brand-50/40 dark:border-slate-700 dark:bg-slate-900/40 dark:hover:bg-brand-500/5"
               >
                 {fileName ? (
                   <>
@@ -372,7 +372,7 @@ export function BulkImportJobsModal({ open, onClose, onImported }: BulkImportJob
               />
 
               {headerError && (
-                <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700">
+                <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-300">
                   <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
                   <span>{headerError}</span>
                 </div>
@@ -394,7 +394,7 @@ export function BulkImportJobsModal({ open, onClose, onImported }: BulkImportJob
                       </span>
                     )}
                   </div>
-                  <div className="max-h-64 overflow-auto rounded-lg border border-gray-200">
+                  <div className="max-h-64 overflow-auto rounded-xl border border-slate-200 dark:border-slate-800">
                     <table className="w-full text-left text-sm">
                       <thead className="sticky top-0 bg-gray-50 text-xs uppercase tracking-wide text-gray-500">
                         <tr>
@@ -448,7 +448,7 @@ export function BulkImportJobsModal({ open, onClose, onImported }: BulkImportJob
             <button
               onClick={close}
               disabled={importing}
-              className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50 disabled:opacity-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
             >
               {results ? t("components.bulkImportJobs.done") : t("components.bulkImportJobs.cancel")}
             </button>
@@ -456,7 +456,7 @@ export function BulkImportJobsModal({ open, onClose, onImported }: BulkImportJob
               <button
                 onClick={runImport}
                 disabled={importing || validRows.length === 0}
-                className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700 disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand-600/20 hover:bg-brand-700 disabled:opacity-50"
               >
                 {importing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
                 {t("components.bulkImportJobs.importBtn", { count: validRows.length })}

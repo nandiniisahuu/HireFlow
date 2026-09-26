@@ -12,7 +12,15 @@ import type { PaginatedResponse, JobPosting } from "@emp-recruit/shared";
 import { cn, formatDate, getInitials } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 
-const STAGES = ["applied", "screened", "interview", "offer", "hired", "rejected", "withdrawn"];
+const STAGES = [
+  "applied",
+  "screened",
+  "interview",
+  "offer",
+  "hired",
+  "rejected",
+  "withdrawn",
+];
 
 const STAGE_BADGE: Record<string, string> = {
   applied: "bg-blue-100 text-blue-700",
@@ -38,12 +46,18 @@ interface AppRow {
 }
 
 const APPLICATION_COLUMNS: ExportColumn<AppRow>[] = [
-  { header: "Candidate", value: (a) => `${a.candidate_first_name} ${a.candidate_last_name}`.trim() },
+  {
+    header: "Candidate",
+    value: (a) => `${a.candidate_first_name} ${a.candidate_last_name}`.trim(),
+  },
   { header: "Job", value: (a) => a.job_title },
   { header: "Department", value: (a) => a.job_department },
   { header: "Stage", value: (a) => a.stage },
   { header: "Source", value: (a) => a.source },
-  { header: "Applied", value: (a) => (a.applied_at ? formatDate(a.applied_at) : "") },
+  {
+    header: "Applied",
+    value: (a) => (a.applied_at ? formatDate(a.applied_at) : ""),
+  },
 ];
 
 export function ApplicationsListPage() {
@@ -70,7 +84,8 @@ export function ApplicationsListPage() {
       setSearch(value);
       setPage(1);
       const next = new URLSearchParams(searchParams);
-      if (value) next.set("search", value); else next.delete("search");
+      if (value) next.set("search", value);
+      else next.delete("search");
       next.delete("page");
       setSearchParams(next, { replace: true });
     }, 400);
@@ -80,11 +95,16 @@ export function ApplicationsListPage() {
   // Jobs power the "job role" dropdown and the department/location options.
   const { data: jobsData } = useQuery({
     queryKey: ["jobs-for-app-filter"],
-    queryFn: () => apiGet<PaginatedResponse<JobPosting>>("/jobs", { perPage: 100 }),
+    queryFn: () =>
+      apiGet<PaginatedResponse<JobPosting>>("/jobs", { perPage: 100 }),
   });
   const jobs = jobsData?.data?.data ?? [];
-  const departments = Array.from(new Set(jobs.map((j) => j.department).filter(Boolean))).sort() as string[];
-  const locations = Array.from(new Set(jobs.map((j) => j.location).filter(Boolean))).sort() as string[];
+  const departments = Array.from(
+    new Set(jobs.map((j) => j.department).filter(Boolean)),
+  ).sort() as string[];
+  const locations = Array.from(
+    new Set(jobs.map((j) => j.location).filter(Boolean)),
+  ).sort() as string[];
 
   const { rows, total, isLoading, isFetching } = usePaginatedList<AppRow>(
     ["applications"],
@@ -120,14 +140,24 @@ export function ApplicationsListPage() {
   }
   const bulkMutation = useMutation({
     mutationFn: (targetStage: string) =>
-      apiPost("/applications/bulk-stage", { application_ids: [...selected], stage: targetStage }),
+      apiPost("/applications/bulk-stage", {
+        application_ids: [...selected],
+        stage: targetStage,
+      }),
     onSuccess: (res: any) => {
-      toast.success(t("applications.bulk.moved", { count: res?.data?.moved ?? selected.size }));
+      toast.success(
+        t("applications.bulk.moved", {
+          count: res?.data?.moved ?? selected.size,
+        }),
+      );
       setSelected(new Set());
       queryClient.invalidateQueries({ queryKey: ["applications"] });
     },
     onError: (err: any) =>
-      toast.error(err?.response?.data?.error?.message || t("applications.bulk.moveFailed")),
+      toast.error(
+        err?.response?.data?.error?.message ||
+          t("applications.bulk.moveFailed"),
+      ),
   });
 
   // Change a filter and reset to page 1.
@@ -154,13 +184,20 @@ export function ApplicationsListPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{t("applications.title")}</h1>
-          <p className="mt-1 text-sm text-gray-500">{t("applications.subtitle")}</p>
+          <h1 className="text-2xl font-bold text-gray-900">
+            {t("applications.title")}
+          </h1>
+          <p className="mt-1 text-sm text-gray-500">
+            {t("applications.subtitle")}
+          </p>
         </div>
         <ExportButtons
           baseName="applications"
           title={t("applications.title")}
-          subtitle={t(filtersActive ? "applications.countMatch" : "applications.count", { count: total })}
+          subtitle={t(
+            filtersActive ? "applications.countMatch" : "applications.count",
+            { count: total },
+          )}
           columns={APPLICATION_COLUMNS}
           fetchRows={() =>
             fetchAllRows<AppRow>("/applications", {
@@ -183,7 +220,12 @@ export function ApplicationsListPage() {
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
           {/* Employee / job search */}
           <div className="w-full flex-1 sm:min-w-[16rem]">
-            <label htmlFor="applications-search" className="mb-1 block text-xs font-medium text-gray-500">{t("applications.searchLabel")}</label>
+            <label
+              htmlFor="applications-search"
+              className="mb-1 block text-xs font-medium text-gray-500"
+            >
+              {t("applications.searchLabel")}
+            </label>
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
@@ -199,7 +241,12 @@ export function ApplicationsListPage() {
 
           {/* Job role */}
           <div>
-            <label htmlFor="applications-job" className="mb-1 block text-xs font-medium text-gray-500">{t("applications.jobRole")}</label>
+            <label
+              htmlFor="applications-job"
+              className="mb-1 block text-xs font-medium text-gray-500"
+            >
+              {t("applications.jobRole")}
+            </label>
             <select
               id="applications-job"
               value={jobId}
@@ -217,7 +264,12 @@ export function ApplicationsListPage() {
 
           {/* Department */}
           <div>
-            <label htmlFor="applications-department" className="mb-1 block text-xs font-medium text-gray-500">{t("applications.department")}</label>
+            <label
+              htmlFor="applications-department"
+              className="mb-1 block text-xs font-medium text-gray-500"
+            >
+              {t("applications.department")}
+            </label>
             <select
               id="applications-department"
               value={department}
@@ -235,7 +287,12 @@ export function ApplicationsListPage() {
 
           {/* Location */}
           <div>
-            <label htmlFor="applications-location" className="mb-1 block text-xs font-medium text-gray-500">{t("applications.location")}</label>
+            <label
+              htmlFor="applications-location"
+              className="mb-1 block text-xs font-medium text-gray-500"
+            >
+              {t("applications.location")}
+            </label>
             <select
               id="applications-location"
               value={location}
@@ -253,7 +310,12 @@ export function ApplicationsListPage() {
 
           {/* Stage */}
           <div>
-            <label htmlFor="applications-stage" className="mb-1 block text-xs font-medium text-gray-500">{t("applications.stageLabel")}</label>
+            <label
+              htmlFor="applications-stage"
+              className="mb-1 block text-xs font-medium text-gray-500"
+            >
+              {t("applications.stageLabel")}
+            </label>
             <select
               id="applications-stage"
               value={stage}
@@ -263,7 +325,10 @@ export function ApplicationsListPage() {
               <option value="">{t("applications.allStages")}</option>
               {STAGES.map((s) => (
                 <option key={s} value={s}>
-                  {t(`applications.stages.${s}`, s.charAt(0).toUpperCase() + s.slice(1))}
+                  {t(
+                    `applications.stages.${s}`,
+                    s.charAt(0).toUpperCase() + s.slice(1),
+                  )}
                 </option>
               ))}
             </select>
@@ -271,7 +336,12 @@ export function ApplicationsListPage() {
 
           {/* Date range */}
           <div>
-            <label htmlFor="applications-from" className="mb-1 block text-xs font-medium text-gray-500">{t("applications.appliedFrom")}</label>
+            <label
+              htmlFor="applications-from"
+              className="mb-1 block text-xs font-medium text-gray-500"
+            >
+              {t("applications.appliedFrom")}
+            </label>
             <input
               id="applications-from"
               type="date"
@@ -282,7 +352,12 @@ export function ApplicationsListPage() {
             />
           </div>
           <div>
-            <label htmlFor="applications-to" className="mb-1 block text-xs font-medium text-gray-500">{t("applications.appliedTo")}</label>
+            <label
+              htmlFor="applications-to"
+              className="mb-1 block text-xs font-medium text-gray-500"
+            >
+              {t("applications.appliedTo")}
+            </label>
             <input
               id="applications-to"
               type="date"
@@ -316,7 +391,9 @@ export function ApplicationsListPage() {
       ) : rows.length === 0 ? (
         <div className="rounded-xl border border-gray-200 bg-white p-12 text-center">
           <FileText className="mx-auto h-12 w-12 text-gray-300" />
-          <p className="mt-3 text-sm text-gray-500">{t("applications.noApplications")}</p>
+          <p className="mt-3 text-sm text-gray-500">
+            {t("applications.noApplications")}
+          </p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -340,7 +417,9 @@ export function ApplicationsListPage() {
                   </option>
                 ))}
               </select>
-              {bulkMutation.isPending && <Loader2 className="h-4 w-4 animate-spin text-brand-600" />}
+              {bulkMutation.isPending && (
+                <Loader2 className="h-4 w-4 animate-spin text-brand-600" />
+              )}
               <button
                 type="button"
                 onClick={() => setSelected(new Set())}
@@ -363,34 +442,36 @@ export function ApplicationsListPage() {
                 to={`/applications/${app.id}`}
                 className="flex flex-1 items-center justify-between rounded-xl border border-gray-200 bg-white p-4 transition-colors hover:border-brand-200 hover:bg-gray-50"
               >
-              <div className="flex min-w-0 flex-1 items-center gap-3">
-                <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-brand-50 text-sm font-semibold text-brand-700">
-                  {getInitials(`${app.candidate_first_name} ${app.candidate_last_name}`)}
-                </span>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-gray-900">
-                    {app.candidate_first_name} {app.candidate_last_name}
-                  </p>
-                  <p className="truncate text-xs text-gray-500">
-                    {app.job_title}
-                    {app.job_department ? ` · ${app.job_department}` : ""}
-                  </p>
+                <div className="flex min-w-0 flex-1 items-center gap-3">
+                  <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-brand-50 text-sm font-semibold text-brand-700">
+                    {getInitials(
+                      `${app.candidate_first_name} ${app.candidate_last_name}`,
+                    )}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-gray-900">
+                      {app.candidate_first_name} {app.candidate_last_name}
+                    </p>
+                    <p className="truncate text-xs text-gray-500">
+                      {app.job_title}
+                      {app.job_department ? ` · ${app.job_department}` : ""}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="ml-4 flex flex-shrink-0 items-center gap-3">
-                <span
-                  className={cn(
-                    "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize",
-                    STAGE_BADGE[app.stage] ?? "bg-gray-100 text-gray-700",
-                  )}
-                >
-                  {t(`applications.stages.${app.stage}`, app.stage)}
-                </span>
-                <span className="hidden items-center gap-1 whitespace-nowrap text-xs text-gray-400 sm:inline-flex">
-                  <Calendar className="h-3 w-3" />
-                  {formatDate(app.applied_at)}
-                </span>
-              </div>
+                <div className="ml-4 flex flex-shrink-0 items-center gap-3">
+                  <span
+                    className={cn(
+                      "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize",
+                      STAGE_BADGE[app.stage] ?? "bg-gray-100 text-gray-700",
+                    )}
+                  >
+                    {t(`applications.stages.${app.stage}`, app.stage)}
+                  </span>
+                  <span className="hidden items-center gap-1 whitespace-nowrap text-xs text-gray-400 sm:inline-flex">
+                    <Calendar className="h-3 w-3" />
+                    {formatDate(app.applied_at)}
+                  </span>
+                </div>
               </Link>
             </div>
           ))}
