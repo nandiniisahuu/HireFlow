@@ -1,325 +1,732 @@
-# HireFlow
+# HireFlow — Recruitment & Applicant Tracking System
 
-> AI-powered recruitment and applicant tracking system designed to simplify the complete hiring workflow — from job posting and candidate applications to interviews, AI evaluation, offers, and onboarding.
+HireFlow is a full-stack recruitment and applicant tracking platform developed as a independent full-stack project.
 
-## 📌 Overview
+The project was **adapted and enhanced from the open-source EMP Recruit project by EmpCloud** to understand and work with a real-world style recruitment codebase and end-to-end hiring workflows.
 
-HireFlow is a full-stack recruitment management platform built for HR teams and recruiters.
+The project focuses on practical full-stack development, including frontend development, backend REST APIs, database integration, authentication, recruitment workflows, AI-powered features, and modular application architecture.
 
-It provides a centralized system to manage job postings, candidates, applications, interviews, recruitment automation, offers, onboarding, and analytics.
+> **Project Note:** HireFlow is a personal learning/portfolio project. It is not an official EMP Cloud product and does not represent employment with EmpCloud. The original EMP Recruit project is open-source and belongs to the EmpCloud ecosystem.
 
-The platform also includes AI-powered recruitment features that assist recruiters in evaluating candidates and streamlining the hiring process.
+---
 
-## ✨ Features
+## 🚀 Project Overview
 
-### 🔐 Authentication & User Management
+HireFlow provides a centralized platform for managing recruitment activities from job creation to candidate hiring.
 
-- User registration and login
-- Secure authentication
-- Role-based access
-- Organization management
-- Token-based authentication
-- Session management
+The application includes workflows for:
 
-### 💼 Job Management
-
-- Create, edit, and manage job postings
-- Publish and close job postings
-- Public and private job visibility
-- Department and location management
-- Employment type and work mode
-- Salary and experience information
-- Job skills and requirements
-
-### 🌐 Career Page
-
-- Public company career page
-- Published job listings
-- Online job applications
-- Resume upload
-- Cover letter submission
-- Candidate information collection
-
-### 👥 Candidate Management
-
-- Centralized candidate profiles
-- Resume management
-- Skills and experience tracking
-- Candidate application history
-- Candidate source tracking
+- Job postings
+- Candidate management
+- Application tracking
+- Recruitment pipeline
+- Interview scheduling
+- Interview feedback
+- Offer management
+- Onboarding
+- Recruitment analytics
 - Candidate comparison
-- Duplicate candidate detection and review
+- AI-assisted recruitment features
+- Career pages
+- Candidate portal
+- Email templates
+- Background checks
+- Surveys
+- Assessments
 
-### 📋 Applicant Tracking System (ATS)
+The project helped me understand how an existing full-stack codebase can be studied, modified, extended, and run as an integrated application.
 
-Candidate applications can move through a recruitment pipeline:
+---
+
+## 🎯 Project Objective
+
+The main objective of this project was to gain practical experience working with a **real-world style full-stack application** instead of developing only a small CRUD application from scratch.
+
+Through this project, I worked on:
+
+- Understanding an existing codebase
+- Understanding frontend and backend communication
+- Working with REST APIs
+- Working with relational databases
+- Understanding database migrations
+- Implementing and modifying UI workflows
+- Working with authentication and authorization
+- Understanding recruitment business workflows
+- Integrating frontend, backend, and database layers
+- Building and testing a larger modular application
+
+---
+
+## ✨ Key Features
+
+### 👨‍💼 Recruitment Management
+
+- Job posting management
+- Job status management
+- Candidate management
+- Candidate search and filtering
+- Application tracking
+- Recruitment pipeline
+- Custom pipeline stages
+- Candidate comparison
+- Recruitment analytics
+
+### 📋 Application Tracking
+
+Applications can move through different recruitment stages such as:
 
 ```text
-Applied → Screened → Interview → Offer → Hired
+Applied
+   ↓
+Screened
+   ↓
+Interview
+   ↓
+Offer
+   ↓
+Hired / Rejected
 ```
 
-Additional stages include:
+Application stage changes can be tracked through the application's history.
 
-- Rejected
-- Withdrawal
+### 👤 Candidate Management
 
-### 🤖 AI-Powered Recruitment
+Recruiters can manage:
 
-- AI resume evaluation
-- Candidate scoring
-- Skill extraction
-- Candidate ranking
-- AI-assisted job description generation
-- AI interview functionality
-- AI-based candidate assessment
+- Candidate profiles
+- Resume information
+- Candidate experience
+- Skills
+- Applications
+- Notes
+- Tags
+- Recruitment status
 
 ### 🎤 Interview Management
 
-- Schedule interviews
-- Technical and HR interview rounds
-- Interview duration management
-- Online interview support
-- Jitsi meeting integration
-- Interview panel management
+The application supports:
+
+- Interview scheduling
+- Interviewer assignment
 - Interview feedback
+- Interview invitations
+- Meeting links
+- Calendar links
 - Interview recordings
-- Interview transcripts
-- Calendar integration
+- Interview transcription
+
+### 🤖 AI Features
+
+The project includes AI-assisted recruitment functionality such as:
+
+- AI-assisted job description generation
+- AI-Powered Recruitment
+- Resume Evaluation
+- Candidate Assessment
+- AI Interviews
+
+AI providers are configurable through environment variables.
 
 ### 📄 Offer Management
 
+Recruiters can:
+
 - Create offers
-- Offer approval workflow
-- Salary and benefits management
-- Offer expiry dates
-- Offer templates
-- Offer letter generation
-- Candidate offer tracking
+- Submit offers for approval
+- Approve offers
+- Generate offer letters
+- Generate PDF documents
+- Send offer letters to candidates
 
-### 🧑‍💼 Employee Onboarding
+### 🧑‍💻 Candidate Portal
 
-- Onboarding checklists
-- New-hire tasks
-- Welcome and first-day tasks
-- Account and system-access tasks
-- Workstation preparation
-- Team introduction tasks
+Candidates can access recruitment-related information such as:
 
-### ⚙️ Recruitment Automation
-
-- Status-based automation
-- Interview workflow automation
-- Automatic interview scheduling
-- Automated candidate emails
-- Recruitment workflow rules
+- Applications
+- Interview schedules
+- Offers
+- Application status
 
 ### 📊 Recruitment Analytics
 
-Track recruitment activity including:
+The application provides recruitment-related metrics including:
+
+- Hiring pipeline
+- Time-to-hire
+- Source effectiveness
+- Pipeline conversion
+- Offer acceptance information
+
+---
+
+### Multi-Tenant Architecture
+
+HireFlow follows an organization-based multi-tenant architecture.
+
+- Each organization can manage its own users, jobs, candidates, applications, interviews, offers, and onboarding data.
+- Recruiters access recruitment data associated with their organization.
+- Organization-level data isolation helps keep private recruitment information separated between organizations.
+- Published jobs can be displayed on an organization's public Career Page.
+- Candidates can view public job postings and apply without accessing the recruiter dashboard.
+
+---
+
+# 🛠️ Tech Stack
+
+| Layer                  | Technologies                                   |
+| ---------------------- | ---------------------------------------------- |
+| Frontend               | React.js, TypeScript, Vite                     |
+| Styling                | Tailwind CSS, Radix UI                         |
+| Backend                | Node.js, Express.js, TypeScript                |
+| APIs                   | REST APIs                                      |
+| Database               | MySQL                                          |
+| Database Layer         | Knex.js                                        |
+| Authentication         | JWT / SSO-related authentication flow          |
+| Cache / Infrastructure | Redis configuration                            |
+| AI                     | Anthropic / OpenAI-compatible AI configuration |
+| File Uploads           | Multer                                         |
+| PDF Generation         | Puppeteer / Handlebars                         |
+| Package Manager        | pnpm                                           |
+| Architecture           | Monorepo / Workspace-based application         |
+
+---
+
+# 📁 Project Structure
+
+```text
+HireFlow/
+│
+├── package.json
+├── pnpm-workspace.yaml
+├── pnpm-lock.yaml
+├── .env
+│
+└── packages/
+    │
+    ├── client/
+    │   ├── src/
+    │   ├── public/
+    │   ├── package.json
+    │   └── vite.config.ts
+    │
+    ├── server/
+    │   ├── src/
+    │   │   ├── api/
+    │   │   ├── config/
+    │   │   ├── db/
+    │   │   ├── services/
+    │   │   ├── jobs/
+    │   │   └── index.ts
+    │   └── package.json
+    │
+    └── shared/
+        └── src/
+```
+
+### Client
+
+The `client` package contains the React frontend.
+
+```text
+packages/client/
+```
+
+It handles:
+
+- User interface
+- Routing
+- Forms
+- Dashboard pages
+- Recruitment workflows
+- API communication
+- Candidate and recruiter views
+
+The Vite development server runs on:
+
+```text
+http://localhost:5179
+```
+
+### Server
+
+The `server` package contains the Node.js + Express backend.
+
+```text
+packages/server/
+```
+
+It handles:
+
+- REST APIs
+- Business logic
+- Authentication
+- Database operations
+- Recruitment workflows
+- File uploads
+- AI-related services
+- Email-related functionality
+
+The backend runs on:
+
+```text
+http://localhost:4500
+```
+
+### Shared
+
+The `shared` package contains reusable TypeScript types and shared application definitions used across packages.
+
+---
+
+# 🗄️ Database
+
+HireFlow uses **MySQL** as its relational database.
+
+The primary recruitment database is:
+
+```text
+emp_recruit
+```
+
+The application uses **Knex.js** for database connectivity and migrations.
+
+Database migrations are stored under:
+
+```text
+packages/server/src/db/migrations/
+```
+
+The project contains migrations for different recruitment-related modules and features.
+
+Examples include:
 
 - Job postings
-- Applications
 - Candidates
+- Applications
 - Interviews
 - Offers
-- Hiring activity
-- Recruitment pipeline
+- Onboarding
+- Referrals
+- Analytics
+- Resume scoring
+- Pipeline configuration
+- Background checks
+- Surveys
+- Assessments
 
-### 📧 Email Management
+---
 
-- Email templates
-- Candidate notifications
-- Application status emails
-- Interview invitations
-- Recruitment automation emails
-- Offer-related communication
+# ⚙️ Installation & Setup
 
-### 📝 Custom Application Forms
+## 1. Prerequisites
 
-Create customized application forms to collect additional candidate information during the application process.
+Make sure the following are installed:
 
-### 🔎 Duplicate Candidate Detection
+- Node.js 20+
+- pnpm 9+
+- MySQL 8+
+- Git
 
-Identify possible duplicate candidate records using candidate information such as email, phone number, and candidate details.
+Redis is also configured by the project for supported infrastructure/queue functionality.
 
-### 🔗 Job Board Integration
+---
 
-Support for external job board publishing and integration.
+## 2. Clone the Repository
 
-## 🛠️ Tech Stack
+```bash
+git clone <your-repository-url>
+```
+
+Move into the project:
+
+```bash
+cd HireFlow
+```
+
+---
+
+## 3. Install Dependencies
+
+From the project root:
+
+```bash
+pnpm install
+```
+
+This installs dependencies for the workspace packages.
+
+---
+
+# 🔐 Environment Configuration
+
+The project reads the environment configuration from the **root `.env` file**.
+
+Create:
+
+```text
+HireFlow/.env
+```
+
+Example:
+
+```env
+NODE_ENV=development
+
+# Server
+PORT=4500
+HOST=0.0.0.0
+
+# Recruitment Database
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your_mysql_password
+DB_NAME=emp_recruit
+
+# EmpCloud Database
+EMPCLOUD_DB_HOST=localhost
+EMPCLOUD_DB_PORT=3306
+EMPCLOUD_DB_USER=root
+EMPCLOUD_DB_PASSWORD=your_mysql_password
+EMPCLOUD_DB_NAME=empcloud
+
+# Redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
+
+# JWT
+JWT_SECRET=change-this-development-secret
+JWT_ACCESS_EXPIRY=2h
+JWT_REFRESH_EXPIRY=7d
+
+# Client
+CLIENT_URL=http://localhost:5179
+CORS_ORIGIN=http://localhost:5179
+
+# Public URLs
+SERVER_PUBLIC_URL=http://localhost:4500
+PUBLIC_SITE_BASE_URL=http://localhost:5179
+
+# Email - development example
+EMAIL_PROVIDER=smtp
+SMTP_HOST=localhost
+SMTP_PORT=1025
+SMTP_USER=
+SMTP_PASSWORD=
+SMTP_FROM=recruit@empcloud.com
+
+# AI
+AI_PROVIDER=none
+```
+
+> Do not commit real passwords, API keys, JWT secrets, or other credentials to GitHub.
+
+AI providers can be configured separately when AI functionality is required.
+
+---
+
+# 🗃️ Database Setup
+
+Start MySQL:
+
+```bash
+sudo systemctl start mysql
+```
+
+Login:
+
+```bash
+mysql -u root -p
+```
+
+Create the recruitment database:
+
+```sql
+CREATE DATABASE emp_recruit;
+```
+
+If your local setup also uses the EmpCloud database:
+
+```sql
+CREATE DATABASE empcloud;
+```
+
+Exit MySQL:
+
+```sql
+exit;
+```
+
+---
+
+# 🔄 Run Database Migrations
+
+From the project root:
+
+```bash
+pnpm db:migrate
+```
+
+This runs the recruitment database migrations.
+
+The migration command uses the project's migration files to create/update the required database tables.
+
+---
+
+# 🌱 Seed Database
+
+If sample/default data is required:
+
+```bash
+pnpm db:seed
+```
+
+The seed process initializes the configured recruitment data.
+
+The application also initializes the required EmpCloud-side database schema during server startup when the configured EmpCloud database is available.
+
+---
+
+# ▶️ Run the Application
+
+Start both frontend and backend together:
+
+```bash
+pnpm dev
+```
+
+The application starts:
+
+### Frontend
+
+```text
+http://localhost:5179
+```
+
+### Backend API
+
+```text
+http://localhost:4500
+```
+
+The Vite frontend proxies API requests to the backend.
+
+---
+
+# 🧩 Run Frontend and Backend Separately
+
+### Start Backend
+
+```bash
+pnpm dev:server
+```
+
+Backend:
+
+```text
+http://localhost:4500
+```
+
+### Start Frontend
+
+In another terminal:
+
+```bash
+pnpm dev:client
+```
+
+Frontend:
+
+```text
+http://localhost:5179
+```
+
+---
+
+# 🏗️ Build the Project
+
+Build all workspace packages:
+
+```bash
+pnpm build
+```
+
+### Build only the frontend
+
+```bash
+pnpm build:client
+```
+
+### Build only the backend
+
+```bash
+pnpm build:server
+```
+
+---
+
+# 🚀 Start Production Backend
+
+After building:
+
+```bash
+pnpm --filter @emp-recruit/server start
+```
+
+The backend uses the compiled files from:
+
+```text
+packages/server/dist/
+```
+
+---
+
+# 🔌 API
+
+The backend exposes REST APIs for different recruitment modules.
+
+Main API areas include:
+
+```text
+/api
+```
+
+Examples of functionality include:
+
+- Jobs
+- Candidates
+- Applications
+- Interviews
+- Offers
+- Onboarding
+- Referrals
+- Analytics
+- Resume scoring
+- Pipeline management
+- Candidate portal
+- Career pages
+- Surveys
+- Assessments
+
+The local backend runs on:
+
+```text
+http://localhost:4500
+```
+
+---
+
+# 🔄 Frontend ↔ Backend Communication
+
+The frontend communicates with the Node.js/Express backend through REST APIs.
+
+Development requests are proxied by Vite:
+
+```text
+React Frontend
+      ↓
+Vite Proxy
+      ↓
+Express REST API
+      ↓
+Knex.js
+      ↓
+MySQL
+```
+
+This structure helped me understand how a full-stack application connects the UI, API layer, business logic, and database.
+
+---
+
+# 🔐 Authentication & Security
+
+The application includes authentication and authorization-related functionality.
+
+The backend configuration supports:
+
+- JWT
+- Access tokens
+- Refresh tokens
+- Role-based access
+- CORS configuration
+- Request validation
+- Authentication middleware
+- Environment-based secrets
+
+Development and production environments use different configuration requirements.
+
+---
+
+# 🧠 What I Learned From This Project
+
+Working on HireFlow helped me gain practical experience with:
 
 ### Frontend
 
 - React.js
 - TypeScript
 - Vite
-- React Router
-- HTML5
-- CSS
+- React routing
+- Component-based UI
+- API integration
+- Forms and data handling
 
 ### Backend
 
 - Node.js
 - Express.js
-- TypeScript
-- REST APIs
+- REST API development
+- Middleware
+- Authentication
+- Request validation
+- Service-based backend organization
 
 ### Database
 
 - MySQL
 - Knex.js
+- Database migrations
+- Relational data modeling
+- CRUD operations
+- Multiple related entities
 
-### Caching
+### Full-Stack Development
 
-- Redis
+- Frontend/backend integration
+- API-based communication
+- Environment configuration
+- Existing codebase understanding
+- Debugging
+- Build processes
+- Local development setup
 
-### Authentication & Security
+---
 
-- JWT
-- HTTP-only cookies
-- Password hashing
-- Role-based authorization
-- Input validation
-- CORS
+# 💡 Why I Built This Project
 
-### AI
+I wanted to understand how a larger, real-world style application works instead of limiting my learning to small standalone CRUD projects.
 
-- AI-powered recruitment
-- AI resume scoring and evaluation
-- AI candidate assessment
-- AI interview functionality
-- AI-assisted job description generation
+For this reason, I explored the open-source **EMP Recruit** project from EmpCloud, studied its existing structure and workflows, and adapted/enhanced it as my own portfolio project.
 
-### Development Tools
+This gave me experience with the type of situation developers can encounter in professional environments, where they need to:
 
-- Git
-- GitHub
-- VS Code
-- pnpm
+1. Understand an existing codebase
+2. Identify how different modules work
+3. Understand existing APIs and database structures
+4. Make changes without breaking existing functionality
+5. Build and test the application
+6. Add or modify features according to requirements
 
-### Multi-Tenant Architecture
+---
 
-HireFlow follows an organization-based multi-tenant architecture.
-
-- Each organization has its own users, jobs, candidates, applications, interviews, offers, and onboarding data.
-- Recruiters can access recruitment data belonging to their organization.
-- Private recruitment data is isolated between different organizations.
-- Published and public jobs can be displayed on the organization's public Career Page.
-- Candidates can view public job postings and apply without accessing the recruiter dashboard.
-
-## 🏗️ Project Structure
-
-```text
-HireFlow/
-├── packages/
-│   ├── client/
-│   │   └── src/
-│   │       ├── api/
-│   │       ├── components/
-│   │       ├── pages/
-│   │       ├── hooks/
-│   │       └── ...
-│   ├── server/
-│   │   └── src/
-│   │       ├── api/
-│   │       ├── services/
-│   │       ├── middleware/
-│   │       └── ...
-│   └── shared/
-│       └── src/
-├── docs/
-├── e2e/
-├── docker/
-├── package.json
-├── pnpm-workspace.yaml
-├── pnpm-lock.yaml
-├── tsconfig.json
-└── README.md
-```
-
-## 🔄 Recruitment Workflow
-
-```text
-Create Job
-    ↓
-Publish Job
-    ↓
-Candidate Applies
-    ↓
-Candidate Profile Created
-    ↓
-AI Resume Evaluation
-    ↓
-Application Screening
-    ↓
-Interview Scheduling
-    ↓
-Interview & Feedback
-    ↓
-Offer Creation
-    ↓
-Offer Approval
-    ↓
-Offer Sent
-    ↓
-Offer Accepted
-    ↓
-Employee Onboarding
-    ↓
-Hired
-```
-
-## 🤖 AI Recruitment Workflow
-
-```text
-Candidate Resume
-       ↓
-Resume Processing
-       ↓
-Skill Extraction
-       ↓
-Candidate Evaluation
-       ↓
-AI Score
-       ↓
-Candidate Ranking
-       ↓
-Recruiter Review
-```
-
-AI features are intended to assist recruiters and support human decision-making.
-
-## 📊 Main Modules
-
-| Module          | Purpose                             |
-| --------------- | ----------------------------------- |
-| Dashboard       | Recruitment overview                |
-| Jobs            | Job creation and management         |
-| Career Page     | Public job listings                 |
-| Applications    | Track candidate applications        |
-| Candidates      | Manage candidate profiles           |
-| Interviews      | Schedule and manage interviews      |
-| Offers          | Manage offers and offer letters     |
-| Onboarding      | Manage new-hire tasks               |
-| Analytics       | Recruitment insights                |
-| Recruitment Ops | Automation and candidate operations |
-| Settings        | System configuration                |
-
-## 🔒 Security
-
-HireFlow uses common application security practices including:
-
-- Password hashing
-- JWT authentication
-- HTTP-only cookies
-- Input validation
-- CORS configuration
-- Role-based authorization
-- Environment-based secrets
-- Secure API communication
-
-## 👩‍💻 Author
+# 👩‍💻 Author
 
 **Nandini**
 
 Full Stack Developer
+
+---
+
+## ⭐ Project Focus
+
+**Understanding an existing real-world style application → adapting it → enhancing it → running it end-to-end → learning how full-stack systems work together.**
